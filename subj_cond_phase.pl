@@ -47,6 +47,7 @@ while(<$allFH>) {
 
 }
 
+$prevSubj=$subj;
 # get the last (current) subject
 &writexls;
 
