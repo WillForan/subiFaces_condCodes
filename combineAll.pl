@@ -55,13 +55,22 @@ my %ROIID = (
    27 => 'Memorization Zach in array of six'
 );
 
+
+# grab all the fixation spreadsheets
 my @files = glob('~/remotes/B/bea_res/Personal/Andrew/Autism/Experiments\ \&\ Data/K\ Award/Behavioral\ Tasks/Raw\ Data/Cambridge\ Face\ Task/[0-9]*/[0-9]*_Fixation\&ROI.xlsx');
 
 for my $file (@files) {
-   print STDERR "$file\n";
+   #next if -r "$file"; # list but not read permission?
+
+   print STDERR "$file\n"; # to STDERR so input is not captures with redirect or pipe
+
+   # get the subject ID
+   #  could use below, but it's not always there. Filename is safer
+     # get subject id (B1), not always there, use id from file
+     #my $subjectID = $sheet->{Cells}[0][1]->{Val} ;
    $file =~ m:Face Task/(\d+)/:;
    my $subjectID = $1;
-   #next if -r "$file";
+
    my $excel = Spreadsheet::XLSX -> new($file,$converter);
    
    foreach my $sheet (@{$excel -> {Worksheet}}) {
@@ -69,8 +78,6 @@ for my $file (@files) {
      # find the right sheet
      next unless $sheet->{Name} eq "results.fix";
 
-     # get subject id (B1), not always there, use id from file
-     #my $subjectID = $sheet->{Cells}[0][1]->{Val} ;
 
      # list all values (Trial ROIID XfixationMean Yfixation LatencyFixStart LatencyFixEnd ROIType)
      # start on row 5 (4 if 0-index) from A to G (0 to 6)
@@ -83,9 +90,11 @@ for my $file (@files) {
          my $roiid    =  $ROIID{$sheet->{Cells}[$row][1]->{Val}};
 
 
+         # what phase (Test or Mem) are we on
          my $memOrTest='Test';
             $memOrTest='Mem' if $roiid =~ /^Mem/;
 
+         # went from Test -> Mem, means new condition
          if ($prev eq 'Test' and $memOrTest eq 'Mem') {
             my $curTrial = $sheet->{Cells}[$row][0]->{Val};
 
@@ -103,8 +112,14 @@ for my $file (@files) {
                $condition++;
                $prevTrial = $curTrial;
 
-               #print STDERR $condition ,"\t", $lengthOfTest, "\n";
+               print STDERR $condition ,"\t", $lengthOfTest, "\n";
             }
+
+            # we swtich test -> mem but count is off
+            else {
+              print STDERR "test -> mem after $lengthOfTest test trails (condition $condition)\n";             
+            }
+
          }
          $prev = $memOrTest;
 
