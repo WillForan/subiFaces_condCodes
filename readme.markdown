@@ -1,5 +1,7 @@
 ## UPDATE ##
 transposeAverages.pl  -- take ryans script output and make row for each subject-condtion-phase pairing
+./transposeAverages.pl > averages.tsv
+cp averages.tsv /home/foranw/remotes/B/bea\_res/Personal/Andrew/Autism/Experiments\ \&\ Data/K\ Award/Behavioral\ Tasks/Raw\ Data/Cambridge\ Face\ Task/
 
 ## BAD DATA ##
 entries where phase transtion doesn't match expected count
