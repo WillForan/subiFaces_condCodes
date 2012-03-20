@@ -1,3 +1,6 @@
+## UPDATE ##
+transposeAverages.pl  -- take ryans script output and make row for each subject-condtion-phase pairing
+
 ## BAD DATA ##
 entries where phase transtion doesn't match expected count
     106 (empty)
