@@ -23,7 +23,9 @@ my %data;
 my $prevSubj = 0;
 my ($subj, $cond, $type, $longtype, @rest);
 
-open my $allFH, 'combined.tsv' or die "cannot open 'combined.tsv': $!\n";
+$ARGV[0]||='combined.tsv'; # input file
+$ARGV[1]||='xls';          # folder to save xls output
+open my $allFH, $ARGV[0] or die "cannot open '$ARGV[0]': $!\n";
 
 while(<$allFH>) {
  chomp;
@@ -63,7 +65,7 @@ sub writexls {
   print "writing subj $prevSubj data\n";
 
   # open new xls
-  my $workbook = Spreadsheet::WriteExcel->new("xls/$prevSubj.xls");
+  my $workbook = Spreadsheet::WriteExcel->new("$ARGV[1]/$prevSubj.xls");
 
   # for each cond-type combo, make a new sheet
   for my $condType (sort keys %data) {
