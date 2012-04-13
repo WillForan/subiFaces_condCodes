@@ -49,9 +49,15 @@ my %ROIID = (
 #my @files = glob('~/remotes/B/bea_res/Personal/Andrew/Autism/Experiments\ \&\ Data/K\ Award/Behavioral\ Tasks/Raw\ Data/Cambridge\ Face\ Task/[0-9]*/[0-9]*_Fixation\&ROI.xlsx');
 
 push @ARGV, "145" if $#ARGV<0;
+my @errors   = ();
 
 for my $subj (@ARGV) {
    my $file = "/home/foranw/remotes/B/bea_res/Personal/Andrew/Autism/Experiments\ \&\ Data/K\ Award/Behavioral\ Tasks/Raw\ Data/Cambridge\ Face\ Task/$subj/${subj}_Latency\&ROI_2.xlsx";
+   
+   if ( ! -r "$file" ) {
+    print STDERR "cannot open $file\n";
+    next;
+   }
    #print STDERR "$file\n"; # to STDERR so input is not captures with redirect or pipe
    #next if -r "$file"; # list but not read permission?
 
@@ -84,7 +90,7 @@ for my $subj (@ARGV) {
      my $prevTrial= 0;
      my $prev     = 'Test';
      my $prevNum  = 0;
-     
+   
      for my $row   (4 .. $sheet->{MaxRow} ) {
          my $roiidNum = $sheet->{Cells}[$row][1]->{Val};
          # whate does the roiid really mean
@@ -120,8 +126,12 @@ for my $subj (@ARGV) {
 
             # we swtich test -> mem but count is off
             else {
+              # we don't hit the expected total when the roiidNum is not yet a condition 2 roiid 
+              # because condition 1 has 6 mem/test phases
               next if $condition == 1 && $roiidNum =~ m/^(1|2|3|13|14|15)$/;
-              print  "$subjectID\ttest $prevNum\@$prevTrial\tmem $roiidNum\@$curTrial\t$lengthOfTest\t$condition\n";
+              push @errors,
+                   join("\t",$subjectID,$condition,$lengthOfTest, "$prevNum\@$prevTrial","$roiidNum\@$curTrial").
+                   "\n";
             }
 
          }
@@ -136,5 +146,8 @@ for my $subj (@ARGV) {
          #  subject id, condtion num, test/mem, long roiid, trial, ROIID, X,Y, start, end, roitype 
      }
    }
-
+}
+if (@errors) {
+ print join("\t", qw/subj cond length test-#@trial mem-#@trial/),"\n";
+ print for @errors;
 }

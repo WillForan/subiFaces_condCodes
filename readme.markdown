@@ -10,11 +10,24 @@
 	./combineAllFixation.pl > combined_lat.tsv
 	./subj_cond_phase.pl combined_lat.tsv xls-lat
 
+### First only Fixation ###
+	./subj_cond_phase_firstOnly.pl   #this file should also work for lat and not lat, didn't test
 
+## Copy ##
+	 cp xls	~/remotes/B/bea_res/Personal/Andrew/Autism/Experiments\ \&\ Data/K\ Award/Behavioral\ Tasks/Raw\ Data/Cambridge\ Face\ Task/cond-phase_perSubj
+	 cp xls-lat	~/remotes/B/bea_res/Personal/Andrew/Autism/Experiments\ \&\ Data/K\ Award/Behavioral\ Tasks/Raw\ Data/Cambridge\ Face\ Task/cond-phase_perSubj-Lat
+    cp -r xls-lat-firstonly/ ~/remotes/B/bea_res/Personal/Andrew/Autism/Experiments\ \&\ Data/K\ Award/Behavioral\ Tasks/Raw\ Data/Cambridge\ Face\ Task/cond-phase_perSubj_firstonly-Fix
 ## BAD DATA ##
-### Fixation ###
-based on output of ./cond-phaseTest.pl
+	
+	#for s in {101..226}; do ./cond-phaseTest.pl $s | tee -a errors.log; done
+	#./cond-phaseTestLat.pl {101..226} | tee errorsLat.log
+	./cond-phaseCrossCheck.pl xls {101..226}     2>/dev/null
+	./cond-phaseCrossCheck.pl xls-lat {101..226} 2>/dev/null
+
+based on output of ./cond-phaseTest.pl 
 entries where phase transtion doesn't match expected count
+or
+based on output of cond-phaseCrossCheck.pl were roiid doesnt match assigned sheet
     106 (empty)
     112
     123
@@ -27,8 +40,6 @@ entries where phase transtion doesn't match expected count
     182 (empty)
 
 wouldn't catch if 3rd test/mem is off
-### Latency ###
-
 
 
 ## Objective ##
